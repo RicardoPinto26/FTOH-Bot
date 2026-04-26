@@ -2,6 +2,9 @@ import { handleGameStateChange } from "../changeGameState/gameState";
 import { LEAGUE_MODE } from "../hostLeague/leagueMode";
 import { resetPlayers } from "../changePlayerState/players";
 import { cleanupLeagueStartAFKDetection } from "../afk/leagueStartAFKDetection";
+import { resetAllAfkCounters } from "../afk/afk";
+import { resetVSCState } from "../safetyCar/vsc";
+import { resetPitState } from "../tires&pits/newPitSystem/newPitManager";
 
 
 import {
@@ -108,6 +111,9 @@ export function GameStop(room: RoomObject) {
           changeGameMode(GameMode.RACE, room);
           changeLaps("7", undefined, room);
           resetPlayers(room);
+          room.getPlayerList().forEach(player => {
+            resetPitState(player.id);
+          });
           handleRREnabledCommand(undefined, ["false"], room);
           sendAllCutsToDiscord();
         } else if (gameMode == GameMode.TRAINING) {
@@ -116,12 +122,18 @@ export function GameStop(room: RoomObject) {
           reorderPlayersInRoomRace(room);
           movePlayersToCorrectSide();
           resetPlayers(room);
+          room.getPlayerList().forEach(player => {
+            resetPitState(player.id);
+          });
           handleRREnabledCommand(undefined, ["false"], room);
         } else {
           sendRaceResultsToDiscord();
           printAllPositions(room);
           movePlayersToCorrectSide();
           resetPlayers(room);
+          room.getPlayerList().forEach(player => {
+            resetPitState(player.id);
+          });
           sendDiscordMessage(room);
           sendAllCutsToDiscord();
         }
@@ -139,13 +151,14 @@ export function GameStop(room: RoomObject) {
     resetSessionBestSectors();
     resetSandbag(room);
     
-    // Reset safety car state when game stops
     handleSCCommand(undefined, ["off"], room);
     
-    // Clean up league start AFK detection
     cleanupLeagueStartAFKDetection();
     
-    // Reset lastWeatherId when game stops
+    resetAllAfkCounters(room);
+    
+    resetVSCState();
+    
     try {
       const weatherDir = join(__dirname, "../weather");
       const lastWeatherPath = join(weatherDir, "lastWeatherId.json");

@@ -10,7 +10,7 @@ import { Teams } from "../changeGameState/teams";
 import { playerList } from "../changePlayerState/playerList";
 import { sendAlertMessage } from "../chat/chat";
 import { MESSAGES } from "../chat/messages";
-import { handleVSCCommand } from "../commands/flagsAndVSC/handleVSCCommand";
+import { deployVSCAutomatically } from "../safetyCar/vsc";
 import { handleSCCommand } from "../commands/flagsAndVSC/handleSCCommand";
 import { presentationLap } from "../commands/gameState/handlePresentationLapCommand";
 import { chooseOneDebris } from "../debris/chooseOneDebris";
@@ -68,12 +68,14 @@ export function updatePlayerActivity(player: PlayerObject, room?: RoomObject) {
       vscActivated: false,
       wasAfkWhenLeft: false,
     };
+  } else {
+    if (currentTime > playerActivities[playerId].lastActivityTime) {
+      playerActivities[playerId].lastActivityTime = currentTime;
+      playerActivities[playerId].warningSent = false;
+      playerActivities[playerId].lastWarningTime = 0;
+      playerActivities[playerId].vscActivated = false;
+    }
   }
-  
-  playerActivities[playerId].lastActivityTime = currentTime;
-  playerActivities[playerId].warningSent = false;
-  playerActivities[playerId].lastWarningTime = 0;
-  playerActivities[playerId].vscActivated = false;
   
   const playerProps = playerList[playerId];
   if (playerProps) {
@@ -90,7 +92,6 @@ export function resetAllAfkCounters(room: RoomObject) {
     const playerProps = playerList[playerId];
     
     if (playerProps && player.team === Teams.RUNNERS) {
-      // Reset AFK counter for all active players
       if (!playerActivities[playerId]) {
         playerActivities[playerId] = {
           lastActivityTime: currentTime,
@@ -100,7 +101,6 @@ export function resetAllAfkCounters(room: RoomObject) {
           wasAfkWhenLeft: false,
         };
       }
-      
       playerActivities[playerId].lastActivityTime = currentTime;
       playerActivities[playerId].warningSent = false;
       playerActivities[playerId].lastWarningTime = 0;
@@ -205,7 +205,7 @@ export function afkKick(room: RoomObject) {
 
     if (isRealSafetyEnabled() && afkDuration >= 2 && !activity.vscActivated) {
       if (!vsc && !presentationLap) {
-        handleVSCCommand(undefined, undefined, room);
+        deployVSCAutomatically(room);
         
         if (
           ACTUAL_CIRCUIT.info.sectorOne &&

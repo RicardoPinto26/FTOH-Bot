@@ -26,8 +26,9 @@ import { checkTrainingHourlyLog } from '../counters/checkTrainingHourlyLog';
 import { updateDebrisTouch } from '../debris/detectCollisionDebris';
 import { handleChangeCollisionPlayerCano, handleChangePlayerSizeCano } from '../zones/handleCanoTp';
 import { checkWeatherUpdate } from '../weather/weatherManager';
-import { logPlayerSpeed } from '../speed/logPlayerSpeed';
 import { updateLeagueStartAFKDetection } from '../afk/leagueStartAFKDetection';
+import { checkVSCDuration } from '../safetyCar/vsc';
+import { updateNewPitSystemForPlayer } from "../tires&pits/newPitSystem/pitTickHandler";
 
 const detectCutThrottledByPlayer: Map<number, ReturnType<typeof throttlePerSecond>> = new Map();
 
@@ -60,6 +61,9 @@ export function GameTick(room: RoomObject) {
       mainLapCommand(playersAndDiscs, room);
     }
 
+    const scores = room.getScores();
+    const currentTime = scores?.time || 0;
+
     players.forEach((pad) => {
       const p = pad.p;
       handleTireWear(p, room);
@@ -80,14 +84,17 @@ export function GameTick(room: RoomObject) {
         kickIfQualyTimeEnded(room, p);
       }
 
+      updateNewPitSystemForPlayer(p, pad.disc, room, currentTime);
+
       // updatePreviousPos(pad, p);
     });
 
     afkKick(room);
     checkWeatherUpdate(room);
 
-    // Update league start AFK detection
     updateLeagueStartAFKDetection(room);
+
+    checkVSCDuration(room);
 
     if (room.getScores()?.time && room.getScores().time > 0) {
       gameStarted = true;
