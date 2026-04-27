@@ -41,7 +41,6 @@ export function handlePitlane(
         playerList[p.id].pitFailures = generatePitResult(p);
       }
 
-      playerList[p.id].pits.pitsNumber += 1;
       playerList[p.id].inPitlane = true;
       if (LEAGUE_MODE) {
         //Code system for box

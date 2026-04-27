@@ -13,6 +13,7 @@ import {
 } from "../changeGameState/changeGameModes";
 import { log } from "../discord/logger";
 import { updatePlayerActivity, handlePlayerLeave } from "../afk/afk";
+import { checkAndClearSafetyCarDriver } from "../commands/flagsAndVSC/handleSCCommand";
 import { followPlayerId } from "../cameraAndBall/cameraFollow";
 import { checkRunningPlayers } from "../changeGameState/publicGameFlow/startStopGameFlow";
 import { changeGameStoppedNaturally } from "../changeGameState/gameStopeedNaturally";
@@ -26,6 +27,7 @@ export function PlayerLeave(room: RoomObject) {
     if (player.admin) delete afkAdmins[player.id];
     updatePlayerActivity(player);
     handlePlayerLeave(player, room);
+    checkAndClearSafetyCarDriver(player.id, room);
 
     const playerObj = playerList[player.id];
     const firstPlacePlayer = getPlayerByRacePosition("first", room);

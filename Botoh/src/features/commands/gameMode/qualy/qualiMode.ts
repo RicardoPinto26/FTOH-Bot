@@ -33,6 +33,7 @@ export function setQualiTime(
     msg = MESSAGES.QUALI_TIME(qualiTime);
   }
 
-  room.setTimeLimit(qualiTime);
+  // Pass 0 to the API for "no limit"; keep Number.MAX_VALUE only for internal comparisons
+  room.setTimeLimit(time === 0 ? 0 : qualiTime);
   sendSuccessMessage(room, msg);
 }

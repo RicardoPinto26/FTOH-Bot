@@ -13,6 +13,7 @@ export function handleVoteCommand(
 ) {
   if (!isOnVoteSession) {
     sendErrorMessage(room, MESSAGES.NOT_VOTE(), byPlayer.id);
+    return;
   }
   if (playerList[byPlayer.id]?.voted) {
     sendErrorMessage(room, MESSAGES.ALREADY_VOTE(), byPlayer.id);
