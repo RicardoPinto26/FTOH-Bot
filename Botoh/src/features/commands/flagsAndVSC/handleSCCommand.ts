@@ -106,8 +106,8 @@ export function handleSCCommand(
         clearLappedCarAvatar(playerId, room);
         room.sendAnnouncement(
           `Jogador ${player.name} não está mais retardatário`,
-          COLORS.GREEN,
-          1
+          undefined,
+          COLORS.GREEN
         );
       } else {
         // Add lapped status
@@ -115,16 +115,16 @@ export function handleSCCommand(
         handleAvatar(Situacions.LappedCar, player, room);
         room.sendAnnouncement(
           `Jogador ${player.name} agora está retardatário`,
-          COLORS.CYAN,
-          1
+          undefined,
+          COLORS.CYAN
         );
       }
     } else {
       // Handle only actual lapped cars based on positionList
       room.sendAnnouncement(
         MESSAGES.LAPPED_CARS_OVERTAKE()[DEFAULT_LANGUAGE],
-        COLORS.CYAN,
-        1 // Bold font
+        undefined,
+        COLORS.CYAN
       );
 
       // Get leader and identify actually lapped cars (behind in laps)

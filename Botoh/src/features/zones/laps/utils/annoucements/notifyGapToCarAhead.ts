@@ -12,6 +12,7 @@ export function notifyGapToCarAhead(
   currentLap: number
 ) {
   const prevPlayer = lapPositions[lapIndex][position - 2];
+  if (!prevPlayer || !playerList[prevPlayer.id]) return;
   const distance =
     prevPlayer.currentLap > currentLap
       ? prevPlayer.currentLap - currentLap

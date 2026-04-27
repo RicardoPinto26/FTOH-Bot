@@ -24,6 +24,10 @@ export function handleRRPositionCommand(
       return;
     }
 
+    if (!byPlayer.position) {
+      sendErrorMessage(room, MESSAGES.NOT_STARTED(), byPlayer.id);
+      return;
+    }
     setRRPosition(byPlayer.position.x, byPlayer.position.y);
     room.sendAnnouncement("New RR position setted", byPlayer.id);
   } catch (err) {

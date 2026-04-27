@@ -17,7 +17,7 @@ let currentWeatherId: string = '';
 
 export function startWeatherMonitoring(weatherId: string, room?: RoomObject) {
   try {
-    const weatherDir = __dirname;
+    const weatherDir = join(__dirname, "weather");
     const dataPath = join(weatherDir, "weather_data", `weather_${weatherId}.json`);
     
     if (!existsSync(dataPath)) {

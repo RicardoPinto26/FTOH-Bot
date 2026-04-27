@@ -8,6 +8,16 @@ export function handleSetNewWeatherId(
   args: string[],
   room: RoomObject
 ) {
+  if (!byPlayer.admin) {
+    room.sendAnnouncement(
+      "❌ Error: You do not have permission to use this command.",
+      byPlayer.id,
+      COLORS.RED,
+      FONTS.BOLD
+    );
+    return;
+  }
+
   // Check if game has already started
   if (room.getScores() !== null) {
     room.sendAnnouncement(
@@ -45,7 +55,7 @@ export function handleSetNewWeatherId(
 
   try {
     // Save the new weather ID
-    const weatherDir = join(__dirname, "../../weather");
+    const weatherDir = join(__dirname, "weather");
     const lastWeatherPath = join(weatherDir, "lastWeatherId.json");
     writeFileSync(lastWeatherPath, JSON.stringify({ lastWeatherId: weatherId }));
 

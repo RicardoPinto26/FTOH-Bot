@@ -40,7 +40,7 @@ export function handleDefineRain(
     
     // Clear last weather ID
     try {
-      const weatherDir = join(__dirname, "../../weather");
+      const weatherDir = join(__dirname, "weather");
       writeFileSync(join(weatherDir, "lastWeatherId.json"), JSON.stringify({ lastWeatherId: null }));
     } catch (error) {
       console.error("Failed to clear lastWeatherId:", error);
@@ -59,7 +59,7 @@ export function handleDefineRain(
   if (args[0] === "start") {
     // Clear last weather ID
     try {
-      const weatherDir = join(__dirname, "../../weather");
+      const weatherDir = join(__dirname, "weather");
       writeFileSync(join(weatherDir, "lastWeatherId.json"), JSON.stringify({ lastWeatherId: null }));
     } catch (error) {
       console.error("Failed to clear lastWeatherId:", error);
@@ -183,7 +183,7 @@ export function handleDefineRain(
 
 
   try {
-    const weatherDir = join(__dirname, "../../weather");
+    const weatherDir = join(__dirname, "weather");
     const command = `node weatherCalculator.js ${probability} ${Math.ceil(duration)} ${weatherId}`;
     execSync(command, {
       cwd: weatherDir,
